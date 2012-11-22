@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Linebreak.rc
+// Used by Linebrk.rc
 //
 #define IDD_LINEBRK                     145
 #define IDC_INPUT                       4189
@@ -18,6 +18,8 @@
 #define IDC_OBJ                         4212
 #define IDC_CR                          4216
 #define IDC_LF                          4217
+#define IDC_NL                          4218
+
 #define IDC_EXPLAIN                     4251
 
 // Next default values for new objects
