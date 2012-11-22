@@ -15,7 +15,7 @@
 
 	 Disclaimer and legal rights:
 	 ---------------------------
-	 Copyright (C) 1999-2007, ASMUS, Inc. All Rights Reserved. 
+	 Copyright (C) 1999-2008, ASMUS, Inc. All Rights Reserved. 
 	 Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 	 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
@@ -32,7 +32,7 @@
 
 	 --------------------------------------------------------------------------
 
-	 Last updated: 04/10/07 - asmusf - finalized
+	 Last updated: 03/04/08 - asmusf - finalized
 */
 
 // If no UI mode defined, set it here - default is commandline version

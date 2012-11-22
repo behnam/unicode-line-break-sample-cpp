@@ -20,9 +20,11 @@
 #endif
 #endif
 
-// Matches Proposed Update: Version 5.0.1
-// to get version 5.0.0 behavior
-#define v500
+// Matches Version 5.1.0
+// to getProposed Update: Version 5.0.1
+// #define v501
+// or, to get version 5.0.0 behavior
+// #define v500
 
 
 // Linebreak include file
@@ -36,21 +38,27 @@
 // #define DEBUGGING 1				
 
 #ifndef DEBUGGING
+#ifdef _DEGUG
 #define DEBUGGING 1
+#endif
 #endif
 // Debug mode enables Table checks
 
 
 #if DEBUGGING
 // for Table verification, enable this line
-#define VERIFY_PAIR_TABLE  
+// #define VERIFY_PAIR_TABLE  
 #ifdef VERIFY_PAIR_TABLE
 
 // change as needed to for table verification
 #ifdef v500
 #define VERIFICATION_FILE L"PairTableFull5.0.0.html"
 #else
+#ifdef v501  // this may be interim
 #define VERIFICATION_FILE L"PairTableFull5.0.1.html"
+#else
+#define VERIFICATION_FILE L"PairTableFull5.1.0.html"
+#endif
 #endif
 
 #pragma message("Table assertions enabled")
@@ -61,7 +69,7 @@
 	 File: LineBrk.Cpp
 
 	 This is sample code for the line breaking algorithm of
-	 Unicode Standard Annex #14, Line Breaking Properties, Version 5.0.1
+	 Unicode Standard Annex #14, Line Breaking Properties, Version 5.1.0
 	 (and version 5.0.0 when using #define v500)
 
 	 Conformance
@@ -111,9 +119,19 @@
 
 	 Update History:
 	 --------------
+	 Last Revised 08-03-04
+
+	 Finalized, 5.1.0 version
+
+	 This retracts rule 30 from Unicode 5.0.0, and adds rule 12a.
+	 The code also fixes a UI bug that affected the use of the 
+	 pseudo alphabet for NL, as well as display of its LB class
+
 	 Last Revised 07-04-10
 
 	 Finalized, 5.0.1 version
+	 This is an interim version, never standardized, but matches a
+	 proposed update for 5.1.0
 
 	 Last Revised 07-02-14
 
@@ -172,7 +190,7 @@
 
 	 Disclaimer and legal rights:
 	 ---------------------------
-	 Copyright (C) 1999-2007, ASMUS, Inc. All Rights Reserved. 
+	 Copyright (C) 1999-2008, ASMUS, Inc. All Rights Reserved. 
 	 Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 	 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
@@ -217,22 +235,22 @@ bool assert(bool x)
 // characters visible, sets of arrays that allow a mapping to the short name, and a help string for the demo.
 
 // mapping of special characters to control codes for the pseudo alphabet
-const chFIRST = 1;
-const chZWSP = 1;
-const chZWNBSP = 2;
-const chNBHY = 3;
-const chSHY = 4;
-const chNBSP = 5;
-const chDummy1 = 6;	
-const chEM = 7;	// Em dash
-const chELLIPSIS = 8; // Ellipsis
-const chTB =  9;
-const chLFx = 10;
-const chOBJ = 11;
-const chDummy2 = 12;
-const chCRx = 13;
-const chNLx = 14;
-const chLAST = 13;
+const int chFIRST = 1;
+const int chZWSP = 1;
+const int chZWNBSP = 2;
+const int chNBHY = 3;
+const int chSHY = 4;
+const int chNBSP = 5;
+const int chDummy1 = 6;	
+const int chEM = 7;	// Em dash
+const int chELLIPSIS = 8; // Ellipsis
+const int chTB =  9;
+const int chLFx = 10;
+const int chOBJ = 11;
+const int chDummy2 = 12;
+const int chCRx = 13;
+const int chNLx = 14;
+const int chLAST = 14;
 
 // characters in the above list are mapped *both* ways
 // don't use regular ASCII characters
@@ -557,6 +575,7 @@ BOOL CALLBACK LineBrkDlgProc(HWND hwndDlg, UINT message, WPARAM wParam, LPARAM l
 #else
 // For standalone (WINDOWS_UI == 1) the dialog is run as a main window
 // requiring some difference in initialization code and message handling
+#pragma message("Standalone Windows Demo")
 
 // helper function to initialize the explanation window
 BOOL CALLBACK SetExplainProc(HWND hwndChild, LPARAM lParam)
@@ -870,7 +889,7 @@ enum break_class LnBrkClassFromChar[]  =
 					// treat CB as BB for demo purposes
 
 //  0	1	2	3	4	5	6	7	8	9	a	b	c	d	e	f
-	AL, ZW, GL, GL, BA, GL,	AL, B2, IN, BA, LF, CB, AL, CR, AL, AL, // 00-0f
+	AL, ZW, GL, GL, BA, GL,	AL, B2, IN, BA, LF, CB, AL, CR, NL, AL, // 00-0f
 	AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, // 10-1f
 
 //  ' '  !   "       $   %   &   '   (   )   *   +   ,   -   .    /  
@@ -959,7 +978,13 @@ enum break_action brkPairs[][JT+1]=
 	//		1	2	3	4	5	6	7	8	9  10  11  12  13  14  15  16  17  18  19  20  21   22  23  24  25  26  
 	//     OP, CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ,  H2, H3, JL, JV, JT, = after class
 	/*OP*/ XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, CC, XX,  XX, XX, XX, XX, XX, // OP open
+#if defined(v500) || defined(v501)
+// Version 5.0.0 and 5.0.1
 	/*CL*/ oo, XX, SS, SS, XX, XX, XX, XX, SS, SS, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+#else
+//  Version 5.1.0
+	/*CL*/ oo, XX, SS, SS, XX, XX, XX, XX, SS, SS, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+#endif
 	/*QU*/ XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // QU quotation
 	/*GL*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // GL glue
 	/*NS*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NS no-start
@@ -968,8 +993,15 @@ enum break_action brkPairs[][JT+1]=
 	/*IS*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IS infix (numeric) separator
 	/*PR*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, SS, oo, SS, SS, oo, oo, XX, cc, XX,  SS, SS, SS, SS, SS, // PR prefix
 	/*PO*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NU numeric
+#if defined(v500) || defined(v501)
+// Version 5.0.0 and 5.0.1
 	/*NU*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
 	/*AL*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+#else
+// Version 5.1.0
+	/*NU*/ oo, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+	/*AL*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+#endif
 	/*ID*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // ID ideograph (atomic)
 	/*IN*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IN inseparable
 #ifdef v500
@@ -1481,7 +1513,7 @@ void table_verify::verifyAndPrintTable()
 			else if ((cb == OP) && (ca == CM))
 				no_break_pairs_with_space_for_combining(cb, ca, "9: X CM* -> X ; 14: OP SP * × ; 7: × ( SP | ZW )"); // 9: X CM* -> X ; 14: OP SP * x  ; 7: × ( SP | ZW )
 			else if ((cb != SP && cb != BK && cb != CR && cb != LF && cb != NL && cb != ZW) && (ca == CM))
-				no_break_without_space_for_combining(cb, ca, "9: X CM* -> CM ; 31: ALL ÷"); // 9: X CM* -> CM ; 31: ALL ÷ 
+				no_break_without_space_for_combining(cb, ca, "9: X CM* -> X ; 18: SP ÷ (if X == SP)"); // 9: X CM* -> CM ; 31: ALL ÷ 
 			//LB 10  Treat any remaining combining mark as AL.
 			// carried out by rewriting all rules below that use AL
 			// LB 11  Do not break before or after WORD JOINER and related characters.
@@ -1489,28 +1521,28 @@ void table_verify::verifyAndPrintTable()
 				no_break_pairs_with_space(cb, ca, "11: × WJ; ; 7: × ( SP | ZW )"); // 11: × WJ ; 7: × ( SP | ZW )
 			// must exclude all later context starting in x, such as rule LB 8, which occur before rule LB 18
 			else if ( cb == WJ && !(ca == CL || ca == EX || ca == IS || ca == SY))
-				no_break_pair(cb, ca, "11: WJ × ; 7: × ( SP | ZW )"); // 11: WJ × ; 7: × ( SP | ZW ) ; 18: SP ÷
+				no_break_pair(cb, ca, "11: WJ × ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 11: WJ × ; 7: × ( SP | ZW ) ; 18: SP ÷
 #ifdef v500
 // Version 5.0.0
 			// LB 12  Do not break before or after NBSP and related characters.
-			// To account for (SP!) must exclude all later contexts ending in SP, such as rule LB 14, which occur before rule LB 18
+			// To account for [^SP] must exclude all later contexts ending in SP, such as rule LB 14, which occur before rule LB 18
 			else if ( cb != OP && ca == GL)
-				no_break_pair(cb, ca, "12: (!SP) × GL ; 7: × ( SP | ZW )"); // 12: (!SP) × GL ; 7: × ( SP | ZW )
+				no_break_pair(cb, ca, "12: (!SP) × GL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12: [^SP] × GL ; 7: × ( SP | ZW )
 			// must exclude all later context starting in x, such as rule LB 13, which occur before rule LB 18
 			else if ( cb == GL && !(ca == CL || ca == EX || ca == IS || ca == SY))
-				no_break_pair(cb, ca, "12: GL × ; 7: × ( SP | ZW )"); // 12: GL × ; 7: × ( SP | ZW ) 
+				no_break_pair(cb, ca, "12: GL × ; 7: × ( SP | ZW )  ; 18: SP ÷"); // 12: GL × ; 7: × ( SP | ZW ) 
 #else
-// Version 5.0.1
+// Version 5.0.1 and Version 5.1.0
 			// LB 12a  Do not break after NBSP and related characters.
 			// must exclude all later context starting in x, such as rule LB 13, which occur before rule LB 18
 			else if ( cb == GL && !(ca == CL || ca == EX || ca == IS || ca == SY))
-				no_break_pair(cb, ca, "12a: GL × ; 7: × ( SP | ZW )"); // 12: GL × ; 7: × ( SP | ZW )
+				no_break_pair(cb, ca, "12: GL × ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12: GL × ; 7: × ( SP | ZW ); 18: SP ÷
 			// LB 12b  Do not break before NBSP and related characters except after SP, BA and HY
 			else if ((cb == BA || cb == HY) && ca == GL)
-				break_pair(cb, ca, "12b: (!SP, BA, HY) × GL"); // 12b (!SP, BA, HY) × GL
-			// To account for (SP!) must exclude all later contexts ending in SP, such as rule LB 14, which occur before rule LB 18
+				break_pair(cb, ca, "12a: [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12a [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ; 18: SP ÷
+			// To account for [^SP] must exclude all later contexts ending in SP, such as rule LB 14, which occur before rule LB 18
 			else if ( cb != OP && ca == GL)
-				no_break_pair(cb, ca, "12b: (!SP, BA, HY) × GL ; 7: × ( SP | ZW )"); // 12b: (!SP, BA, HY) × GL ; 7: × ( SP | ZW )
+				no_break_pair(cb, ca, "12a: [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12a: [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ;  18: SP ÷
 #endif
 			// LB 13  Do not break before ‘]’ or ‘!’ or ‘;’ or ‘/’, even after spaces.
 			else if(ca == CL || ca == EX || ca == IS || ca == SY )
@@ -1520,13 +1552,13 @@ void table_verify::verifyAndPrintTable()
 				no_break_pairs_with_space(cb, ca, "14: OP SP* × ; 7: × ( SP | ZW )"); // 14: OP SP* × ; 7: × ( SP | ZW )
 			// LB 15  Do not break within ‘”[’, , even with intervening spaces.
 			else if (cb == QU && ca == OP)
-				no_break_pairs_with_space(cb, ca, "15: QU SP* × OP ; 7: × ( SP | ZW )"); // 15: QU SP* × OP ; 7: × ( SP | ZW )
+				no_break_pairs_with_space(cb, ca, "15: QU SP* × OP ;"); // 15: QU SP* × OP ; 7: × ( SP | ZW )
 			// LB 16  Do not break within ‘]h’, even with intervening spaces.
 			else if (cb == CL && ca == NS)
-				no_break_pairs_with_space(cb, ca, "16: CL SP* × NS ; 7: × ( SP | ZW )"); // 16: CL SP* × NS ; 7: × ( SP | ZW )
+				no_break_pairs_with_space(cb, ca, "16: CL SP* × NS ;"); // 16: CL SP* × NS ; 7: × ( SP | ZW )
 			// LB 17  Do not break within ‘——’, even with intervening spaces.
 			else if (cb == B2 && ca == B2)
-				no_break_pairs_with_space(cb, ca, "17: B2 × B2; ; 7: × ( SP | ZW )"); // 17: B2 × B2; ; 7: × ( SP | ZW )
+				no_break_pairs_with_space(cb, ca, "17: B2 SP* × B2;"); // 17: B2 × B2; ; 7: × ( SP | ZW )
 			// LB 18  Break after spaces.
 			//else if (cb == SP)
 			// break_pair(cb, ca, "18: SP ÷"); // 18: SP ÷
@@ -1537,14 +1569,14 @@ void table_verify::verifyAndPrintTable()
 			else if (ca == QU)
 				no_break_pair(cb, ca, "19: × QU ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 19: × QU ; 7: × ( SP | ZW ) ; 18: SP ÷
 			else if (cb == QU)
-				no_break_pair(cb, ca, "19: QU × ; 7: × ( SP | ZW ) "); // 19: QU × ; 7: × ( SP | ZW ) 
+				no_break_pair(cb, ca, "19: QU × ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 19: QU × ; 7: × ( SP | ZW ) ; 18: SP ÷
 			// LB 20  Break before/after unresolved CB
 			// in the demo code, we map CB to B2, so we can avoid a redundant
 			// row/col in the pair table, but the result is that CB CB doesn't break when otherwise it should
 			else if (ca == CB)
-				break_pair(cb, ca, "20: ÷ CB; ; 18: SP ÷"); // 20: ÷ CB; ; 18: SP ÷  
+				break_pair(cb, ca, "20: ÷ CB ; 7: × ( SP | ZW ); 18: SP ÷"); // 20: ÷ CB; 7: × ( SP | ZW ) ; 18: SP ÷  
 			else if (cb == CB)
-				break_pair(cb, ca, "20: CB ÷ ; 7: × ( SP | ZW ) "); // 20: CB ÷ ; 7: × ( SP | ZW ) 
+				break_pair(cb, ca, "20: CB ÷ ; 7: × ( SP | ZW ); 18: SP ÷"); // 20: CB ÷ ; 7: × ( SP | ZW ) ; 18: SP ÷
 			// LB 21  Do not break before hyphen-minus, other hyphens, fixed-width spaces, small kana and other non-starters, or after acute accents.
 			else if (ca == BA || ca == HY || ca == NS)
 				no_break_pair(cb, ca, "21: × BA | HY | NS ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 15:× BA | HY | NS ; 7: × ( SP | ZW ) ; 18: SP ÷
@@ -1603,14 +1635,17 @@ void table_verify::verifyAndPrintTable()
 			// LB 29  Do not break between numeric punctuation and alphabetics ("e.g.").
 			else if (cb == IS && ca == AL)
 				no_break_pair(cb, ca, "29: IS × AL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 29: IS × AL ; 7: × ( SP | ZW ) ; 18: SP ÷
+#if defined(v500) || defined(v501)
+// Version 5.0.0 and Version 5.0.1
 			// LB 30 Do not break between letters, numbers or ordinary symbols and opening or closing punctuation 
 			else if ( ca == OP && (cb == AL || cb == NU)) 
 				no_break_pair(cb, ca, "30: (AL | NU)  × OP ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: (AL | NU) × OP ; 7: × ( SP | ZW ) ; 18: SP ÷
 			else if ( cb == CL && (ca == AL || ca == NU)) 
 				no_break_pair(cb, ca, "30: CL × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: CL × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷
+#endif
 			// LB 31  Break everywhere else.
 			else
-				break_pair(cb, ca, "31: ALL ÷ ; ÷ ALL"); // 31: ALL ÷ ; ÷ ALL
+				break_pair(cb, ca, "31: ALL ÷ ; ÷ ALL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 31: ALL ÷ ; ÷ ALL ;  7: × ( SP | ZW ) ; 18: SP ÷
 		}
 		terminate_row();
 	}
