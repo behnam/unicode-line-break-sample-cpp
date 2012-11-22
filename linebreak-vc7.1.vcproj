@@ -2,8 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="linebrk"
-	ProjectGUID="{4C079B51-45C5-4812-A98E-6FEF826B2E19}"
+	Name="linebreak"
+	ProjectGUID="{EF82024B-9CEE-4D5F-8379-B4EDD158AD64}"
+	RootNamespace="linebreak"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -13,22 +14,23 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="NDEBUG;WINDOWS_UI=1;WIN32;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\Release/linebrk.pch"
+				PrecompiledHeaderFile=".\Release/linebreak.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -71,20 +73,21 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_DEBUG;WINDOWS_UI=1;WIN32;_WINDOWS;STRICT;UNICODE;_UNICODE;$(NOINHERIT)"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\Debug/linebrk.pch"
+				PrecompiledHeaderFile=".\Debug/linebreak.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -131,23 +134,24 @@
 		</Configuration>
 		<Configuration
 			Name="Debug Console|Win32"
-			OutputDirectory=".\Debug Console"
-			IntermediateDirectory=".\Debug Console"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_DEBUG;WINDOWS_UI=0;WIN32;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\Debug Console\linebrk.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\Debug Console\linebreak.pch"
+				AssemblerListingLocation="$(IntDir)"
+				ObjectFile="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"/>
@@ -155,7 +159,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Debug Console\Linebreak.exe"
+				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -164,7 +168,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/linebrk.tlb"
+				TypeLibraryName=".\Debug/linebreak.tlb"
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -188,11 +192,14 @@
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
-			Name="Relase Console|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1">
+			Name="Release Console|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="NDEBUG;WINDOWS_UI=0;WIN32;_CONSOLE"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -236,7 +243,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\linebrk.cpp">
+				RelativePath=".\linebreak.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
@@ -266,7 +273,7 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\linebrk.h">
+				RelativePath=".\linebrk.h">
 			</File>
 			<File
 				RelativePath=".\resource.h">
@@ -276,7 +283,7 @@
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 			<File
-				RelativePath=".\linebrk.rc">
+				RelativePath=".\linebreak.rc">
 			</File>
 		</Filter>
 	</Files>

@@ -16,20 +16,23 @@
 #define IDC_ELLIPSIS                    4210
 #define IDC_ALTERNATE                   4211
 #define IDC_OBJ                         4212
+#define IDC_CMINTABLE                   4213
+#define IDC_HANGULCLUSTER               4215
 #define IDC_CR                          4216
 #define IDC_LF                          4217
 #define IDC_NL                          4218
 
-#define IDC_EXPLAIN                     4251
+
+#define IDC_EXPLAIN                     4252
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        101
+#define _APS_NEXT_RESOURCE_VALUE        146
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         4253
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

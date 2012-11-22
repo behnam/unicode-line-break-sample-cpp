@@ -11,7 +11,7 @@
 
 	 Disclaimer and legal rights:
 	 ---------------------------
-	 Copyright (C) 1999-2008, ASMUS, Inc. All Rights Reserved. 
+	 Copyright (C) 1999-2009, ASMUS, Inc. All Rights Reserved. 
 	 Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 	 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
@@ -78,6 +78,7 @@
 #define TCHAR  char
 #define LPTSTR char *
 #endif
+#pragma warning(disable:4996)
 
 //--- DECLARATIONS FOR DEMO UI ------
 #if WINDOWS_UI
@@ -87,5 +88,4 @@ BOOL CALLBACK LineBrkDlgProc(HWND hwndDlg, UINT message, WPARAM wParam, LPARAM l
 LRESULT CALLBACK LineBrkWndProc(HWND hwndDlg, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 #endif
-
 #endif // ifndef _LINEBRK_H_

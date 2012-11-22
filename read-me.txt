@@ -1,0 +1,49 @@
+========================================================================
+    Linebreak Sample code (Win32 Application or command line)
+========================================================================
+
+linebreak.cpp
+    This file can be compiled as commandline application by setting /DWINDOWS_UI=0
+    on the compiler command line. (Should be possible to compile with other c++ compilers,
+    but no testing to that effect has been done).
+
+    By setting WINDOWS_UI=1 it compiles into a standalone Windows application.
+    To get it precompiled, run this code as part of Unibook (http://unicode.org/unibook/)
+    where it is one of the demos in the Tools menu.
+
+    The implementation strategy is discussed in UAX#14: Unicode Linebreak Algorithm 
+    http://www.unicode.org/reports/tr14/.
+
+linebrk.h
+     Include file
+
+////////////////////////////////////////////////////////////////////////////
+	Files needed to build the windows app
+/////////////////////////////////////////////////////////////////////////////
+
+linebreak.vcproj
+    This is the main project file for VC++ projects generated using an Application Wizard. 
+    It contains information about the version of Visual C++ that generated the file, and 
+    information about the platforms, configurations, and project features selected with the
+    Application Wizard. (For VC 7.10 users there's an older version of the project file as well)
+
+Lbmain.cpp
+     Scaffolding needed for the Windows application
+
+linebreak.rc
+    This is a listing of all of the Microsoft Windows resources that the
+    program uses. This Linebreak project does not define any icons,
+    bitmaps or cursors.
+
+Resource.h
+    This is the standard header file, which defines the resource IDs for dialog and controls/
+
+
+/////////////////////////////////////////////////////////////////////////////
+Other notes:
+	
+    The sample code in each folder implements the version of the algorithm indicated by the
+    folder name. Certain previous versions can be implemented by conditional compilations,
+    see the comments in linebreak.cpp
+
+/////////////////////////////////////////////////////////////////////////////

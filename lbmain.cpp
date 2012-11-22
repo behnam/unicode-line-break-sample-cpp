@@ -15,7 +15,7 @@
 
 	 Disclaimer and legal rights:
 	 ---------------------------
-	 Copyright (C) 1999-2008, ASMUS, Inc. All Rights Reserved. 
+	 Copyright (C) 1999-2009, ASMUS, Inc. All Rights Reserved. 
 	 Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 	 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
@@ -31,8 +31,11 @@
 	 in the above.
 
 	 --------------------------------------------------------------------------
-
-	 Last updated: 03/04/08 - asmusf - finalized
+	
+	History: 
+		03/04/08 - finalized initial draft (AF)
+	 Last updated:
+		22/08/09 - changed include file location (AF)
 */
 
 // If no UI mode defined, set it here - default is commandline version
@@ -57,7 +60,7 @@
 
 //====================  Header Files  ======================
 
-#include "..\linebrk.h"
+#include "linebrk.h"
 
 //====================================================================
 //  Function: int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)

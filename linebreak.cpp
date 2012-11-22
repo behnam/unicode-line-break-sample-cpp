@@ -20,11 +20,16 @@
 #endif
 #endif
 
-// Matches Version 5.1.0
+
+//2 // Conditional compilation for different Unicode versions
+
+// This file matches Version 5.2.0
 // to getProposed Update: Version 5.0.1
 // #define v501
 // or, to get version 5.0.0 behavior
 // #define v500
+// or. to get version 5.1.0 behavior
+// #define v510
 
 
 // Linebreak include file
@@ -51,14 +56,14 @@
 #ifdef VERIFY_PAIR_TABLE
 
 // change as needed to for table verification
-#ifdef v500
+#if defined(v500)
 #define VERIFICATION_FILE L"PairTableFull5.0.0.html"
-#else
-#ifdef v501  // this may be interim
+#elif defined(v501)  // this may be interim
 #define VERIFICATION_FILE L"PairTableFull5.0.1.html"
-#else
+#elif defined(v510)
 #define VERIFICATION_FILE L"PairTableFull5.1.0.html"
-#endif
+#else
+#define VERIFICATION_FILE L"PairTableFull5.2.0.html"
 #endif
 
 #pragma message("Table assertions enabled")
@@ -69,8 +74,8 @@
 	 File: LineBrk.Cpp
 
 	 This is sample code for the line breaking algorithm of
-	 Unicode Standard Annex #14, Line Breaking Properties, Version 5.1.0
-	 (and version 5.0.0 when using #define v500)
+	 Unicode Standard Annex #14, Line Breaking Properties, Version 5.2.0
+	 (and versions 5.1.0 or 5.0.0 when using #define v510 resp. V500)
 
 	 Conformance
 	 -----------
@@ -116,6 +121,9 @@
 
 	 The enumerated line break classes have the same name as in the
 	 description for the Unicode Line Breaking Property
+
+	 Source code uses numerical levels to identify comments that serve
+	 as "section headers" when viewed in certain editing environments
 
 	 Update History:
 	 --------------
@@ -183,6 +191,18 @@
 
 	 Last Revised 04-25-01
 
+	 Updated line break classes, examples, rules, and tables to include new
+	 class "CP" (subset of former CL) for Version 5.2.0 of UAX#14, including
+	 the reintroduced rule LB30. Earlier behavior can be selected with #ifdefs
+	 except that in that case, class CP still exists, but simply takes on the
+	 same behavior as class CL.
+
+	 Last Revised 08-16-09
+
+	 Minor fixes to support public build, compilation under VC 8.00
+
+	 Last Revised 08-24-09
+
 	 Credits:
 	 -------
 	 Written by: Asmus Freytag
@@ -190,7 +210,7 @@
 
 	 Disclaimer and legal rights:
 	 ---------------------------
-	 Copyright (C) 1999-2008, ASMUS, Inc. All Rights Reserved. 
+	 Copyright (C) 1999-2009, ASMUS, Inc. All Rights Reserved. 
 	 Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 	 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
@@ -202,8 +222,8 @@
 	 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 
 	 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE SOFTWARE.
 
-	 The files linebrk.vcproj, linebrk.rc, and resource.h are distributed together  with this file 
-	 and are included in the above.
+	 The files linebrk.vcproj, linebrk.rc, and resource.h are distributed together
+	 with this file and are included in the above.
 ----------------------------------------------------------------------------------*/
 
 // === LOCAL FUNCTION DECLARTIONS ===========================================
@@ -313,29 +333,29 @@ TEXT("Prefix:       $    Postfix:      %    Separator:   ,  \r\n")
 TEXT("Exclamation:  !?   Non-Starter:  :    Syntax:      /  \r\n")
 TEXT("Break after:  *    Break Before: &&    Hyphen:      -  \r\n")
 TEXT("Quote:        \"    Glue:         G    Word Joiner: W  \r\n")
-TEXT("Open         {[(   Close:       )]}   Leaders:     _  \r\n") 
-TEXT("ZW-Space:     Z    Complex:      Y    Object:      @  \r\n") 
-TEXT("Space:       ' '   Break opportunities are shown as | or \xA6");
+TEXT("Open         {[(   Close:        }    Clos.Parens:  ])  \r\n") 
+TEXT("ZW-Space:     Z    Complex:      Y    Object:       @  \r\n") 
+TEXT("Space:       ' '   Leaders:     _     Break opps: | or \xA6");
 #endif
 
 // representative reverse mapping, i.e. mapping of line break class
 // to a single specimen character from the pseudo alphabet.
 TCHAR CharFromLnbkTypes[] =
 {
-	// OP,	CL,  QU,  GL,  NS,  EX,  SY,  IS,  PR,  PO,  NU,  AL,  ID,  IN,  HY,  BA,  BB,  B2,  ZW,  CM,  WJ,  SA,  SP,[ PS,  BK,  CR,  LF,  NL, CB, SG] = class 
-	 0x28,0x29,0x27,0x3D,0x3a,0x21,0x2f,0x2c,0x24,0x25,0x30,0x61,0x4A,0x5f,0x2d,0x2a,0x26,0x07,0x01,0x6a,0x77, 0x7f,0x20,
-    //  (    )    "   =    :    !    /     ,    $   %    0     a    I    _   -    *    &   bell ^A    i   DEL   ' '
+	// OP,	CL, CP, QU,  GL,  NS,  EX,  SY,  IS,  PR,  PO,  NU,  AL,  ID,  IN,  HY,  BA,  BB,  B2,  ZW,  CM,  WJ,  SA,  SP,[ PS,  BK,  CR,  LF,  NL, CB, SG] = class 
+	 0x28,0x7D,0x29,0x27,0x3D,0x3a,0x21,0x2f,0x2c,0x24,0x25,0x30,0x61,0x4A,0x5f,0x2d,0x2a,0x26,0x07,0x01,0x6a,0x77, 0x7f,0x20,
+    //  (    }    )    "   =    :    !    /     ,    $   %    0     a    I    _   -    *    &   bell ^A    i   DEL   ' '
 };
 
 
-// map line break class into single letter from the sequence 1-9,A...Y" 
+// map line break class into single letter from the sequence 1-9,A...Z" 
 // this is usefule for times when it is desired to show a string of 
 // linebreak classes that has the same length as the input string in 
 // characters, however, it's not very readable.
 int CharFromLbcls[] =
 {
-// OP,	CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
-   '1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y',
+// OP,	CL, CP, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
+   '1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
 //....
 };
 
@@ -346,13 +366,13 @@ int CharFromLbcls[] =
 
 int CharFromLbcls1[] =
 {
-// OP,	CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
-   'O','C','Q','G','N','E','S','I','P','P','N','A','I','I','H','B','B','B','Z','C','W','H','H','J','J','J','S','S','P','B','C','L','N','C', //....
+// OP,	CL, CP, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
+   'O','C','C','Q','G','N','E','S','I','P','P','N','A','I','I','H','B','B','B','Z','C','W','H','H','J','J','J','S','S','P','B','C','L','N','C', //....
 };
 int CharFromLbcls2[] =
 {
-// OP, CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
-   'P','L','U','L','S','X','Y','S','R','O','U','L','D','N','Y','A','B','2','W','M','J','2','3','L','V','T','A','P','S','K','R','F','L','B', //....
+// OP, CL, CP, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
+   'P','L','P','U','L','S','X','Y','S','R','O','U','L','D','N','Y','A','B','2','W','M','J','2','3','L','V','T','A','P','S','K','R','F','L','B', //....
 };
 
 // Break actions are the types of break opportunities that may occur at a particular
@@ -379,7 +399,8 @@ int GetInputText(TCHAR * pszInput, int cch)
 
 	int max_ich = sizeof CharFromLnbkTypes / sizeof (TCHAR);
 
-	for (int i = 0; i < cch; i++)
+	int i;
+	for (i = 0; i < cch; i++)
 	{
 		if (++ich[i] >= max_ich)
 		{
@@ -407,7 +428,8 @@ int GetInputText(TCHAR * pszInput, int cch)
 void ShowLBClasses(HWND hwndDlg, int idc, enum break_class *lbcls, int cch)
 {
 	TCHAR pszTypes[MAX_CCH * 2];
-	for (int ich = 0; ich < cch; ich++)
+	int ich;
+	for (ich = 0; ich < cch; ich++)
 	{
 		pszTypes[ich] = CharFromLbcls1[lbcls[ich]];//LBClassFromCh(pszInput[ich])];
 	}
@@ -424,7 +446,8 @@ void ShowLBClasses(HWND hwndDlg, int idc, enum break_class *lbcls, int cch)
 void ShowLineBreaks(HWND hwndDlg, int idc, LPTSTR pszInput, enum break_action *pbrk, int cch)
 {
 	TCHAR pszBrkText[2*MAX_CCH];
-	for (int ichIn = 0, ichOut = 0; ichIn < cch; ichIn++)
+	int ichIn, ichOut;
+	for (ichIn = 0, ichOut = 0; ichIn < cch; ichIn++)
 	{
 		// echo input character
 		pszBrkText[ichOut++] = pszInput[ichIn];
@@ -700,7 +723,8 @@ LRESULT CALLBACK LineBrkWndProc(HWND hwndDlg, UINT message, WPARAM wParam, LPARA
 void ShowLBClasses(FILE *f, LPTSTR pszInput, int cch)
 {
 	TCHAR pszTypes[MAX_CCH * 2];
-	for (int ich = 0; ich < cch; ich++)
+	int ich;
+	for (ich = 0; ich < cch; ich++)
 	{
 		pszTypes[ich] = CharFromLbcls1[LBClassFromCh(pszInput[ich])];
 	}
@@ -718,7 +742,8 @@ void ShowLBClasses(FILE *f, LPTSTR pszInput, int cch)
 void ShowLineBreaks(FILE * f, LPTSTR pszInput, break_action *pbrk, int cch)
 {
 	TCHAR pszBrkText[2*MAX_CCH];
-	for (int ichIn = 0, ichOut = 0; ichIn < cch; ichIn++)
+	int ichIn, ichOut;
+	for (ichIn = 0, ichOut = 0; ichIn < cch; ichIn++)
 	{
 		if (pbrk[ichIn])
 		{
@@ -751,6 +776,7 @@ void usage(char *s)
     printf("\tAll other arguments are interpreted as strings to process.\n");
 }
 
+#pragma message("Compiling main")
 int main(int argc, char** argv) 
 {
     int realArg = 0;
@@ -841,7 +867,8 @@ enum break_class
 {
 	// input types
 	OP = 0,	// open
-	CL,	// close
+	CL,	// closing punctuation
+	CP,	// closing parentheses (from 5.2.0) (before 5.2.0 treat like CL)
 	QU,	// quotation
 	GL,	// glue
 	NS,	// no-start
@@ -893,15 +920,15 @@ enum break_class LnBrkClassFromChar[]  =
 	AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, AL, // 10-1f
 
 //  ' '  !   "       $   %   &   '   (   )   *   +   ,   -   .    /  
-	SP, EX, QU, IN, PR, PO, BB, QU, OP, CL, BA, PR, IN, HY, IN, SY, // 20-2f
+	SP, EX, QU, IN, PR, PO, BB, QU, OP, CP, BA, PR, IN, HY, IN, SY, // 20-2f
 //   0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
 	NU, NU, NU, NU, NU, NU, NU, NU, NU,	NU,	NS,	AL,	AL,	GL, AL,	EX,	// 30-3f
 
 //   @,  A  B   C   D   E   F   G   H   I   J   K   L   M   N   O  
 	CB, ID,	ID, ID,	ID, ID,	ID, GL,	H3, ID,	ID, ID,	JL, ID,	ID, ID,	// 40-4f
-	ID, ID, ID,	ID, JT,	ID, JV,	WJ, XX,	SA, ZW,	OP,	AL,	CL,	AL,	IS,	// 50-5f
+	ID, ID, ID,	ID, JT,	ID, JV,	WJ, XX,	SA, ZW,	OP,	AL,	CP,	AL,	IS,	// 50-5f ... [ \ ] ^ _ 
 	CM, AL,	AL, AL,	AL, AL,	AL, AL,	H2, AL,	AL, AL,	AL, AL,	AL, AL,	// 60-6f
-	AL, AL, AL,	AL, AL,	AL, AL,	AL, AL,	AL, AL,	OP,	AL,	CL,	AL,	SA,	// 70-7f
+	AL, AL, AL,	AL, AL,	AL, AL,	AL, AL,	AL, AL,	OP,	AL,	CL,	AL,	SA,	// 70-7f ... { | } ~ DEL
 //   p  q   r   s   t    u   v   w  x   y   z 
 };
 
@@ -931,7 +958,8 @@ enum break_class LBClassFromCh(TCHAR ch)
 ----------------------------------------------------------------------------*/
 int classifyLnBrk(const LPTSTR pszText, enum break_class * pcls,  int cch)
 {
-	for (int ich = 0; ich < cch; ich++)
+	int ich;
+	for (ich = 0; ich < cch; ich++)
 	{
 		pcls[ich] = LBClassFromCh(pszText[ich]);
 
@@ -973,57 +1001,68 @@ int classifyLnBrk(const LPTSTR pszText, enum break_class * pcls,  int cch)
 // Line Break Pair Table corresponding to Table 2 of UAX#14, Version 5.0.0 
 // plus Korean Syllable Block extensions - for details see that document
 
+// Additional rows added or replaced for versions 5.0.1, 5.1.0 or 5.2.0 as needed by conditional compilation
+// Additional column added for version 5.2.0 (CP). In earlier versions this acts identical to col for CL.
+
 enum break_action brkPairs[][JT+1]=
 {   //                ---     'after'  class  ------
-	//		1	2	3	4	5	6	7	8	9  10  11  12  13  14  15  16  17  18  19  20  21   22  23  24  25  26  
-	//     OP, CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ,  H2, H3, JL, JV, JT, = after class
-	/*OP*/ XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, CC, XX,  XX, XX, XX, XX, XX, // OP open
+	//		1	2	3	4	5	6	7	8	9  10  11  12  13  14  15  16  17  18  19  20  21   22  23  24  25  26  27
+	//     OP, CL, CL, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ,  H2, H3, JL, JV, JT, = after class
+	/*OP*/ XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, XX, CC, XX,  XX, XX, XX, XX, XX, // OP open
 #if defined(v500) || defined(v501)
-// Version 5.0.0 and 5.0.1
-	/*CL*/ oo, XX, SS, SS, XX, XX, XX, XX, SS, SS, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+// Version 5.0.0 .0 aand 5.0.1
+	/*CL*/ oo, XX, XX, SS, SS, XX, XX, XX, XX, SS, SS, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+#elif defined(v510)
+//  Version 5.1.01.0
+	/*CL*/ oo, XX, XX, SS, SS, XX, XX, XX, XX, SS, SS, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
 #else
-//  Version 5.1.0
-	/*CL*/ oo, XX, SS, SS, XX, XX, XX, XX, SS, SS, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+// Version 5.2.0 and higher
+	/*CL*/ oo, XX, XX, SS, SS, XX, XX, XX, XX, SS, SS, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
+	/*CP*/ oo, XX, XX, SS, SS, XX, XX, XX, XX, SS, SS, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CL close
 #endif
-	/*QU*/ XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // QU quotation
-	/*GL*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // GL glue
-	/*NS*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NS no-start
-	/*EX*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // EX exclamation/interrogation
-	/*SY*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // SY Syntax (slash)
-	/*IS*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IS infix (numeric) separator
-	/*PR*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, SS, oo, SS, SS, oo, oo, XX, cc, XX,  SS, SS, SS, SS, SS, // PR prefix
-	/*PO*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NU numeric
-#if defined(v500) || defined(v501)
-// Version 5.0.0 and 5.0.1
-	/*NU*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
-	/*AL*/ SS, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+	/*QU*/ XX, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // QU quotation
+	/*GL*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // GL glue
+	/*NS*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NS no-start
+	/*EX*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // EX exclamation/interrogation
+	/*SY*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // SY Syntax (slash)
+	/*IS*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IS infix (numeric) separator
+	/*PR*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, SS, oo, SS, SS, oo, oo, XX, cc, XX,  SS, SS, SS, SS, SS, // PR prefix
+	/*PO*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // NU numeric
+#if defined(v500)|| defined(v501)
+// Version 5.0.0 .0 aand 5.0.1
+	/*NU*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+	/*AL*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+#elif defined(v510)
+// Version 5.1.0.0
+	/*NU*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+	/*AL*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
 #else
-// Version 5.1.0
-	/*NU*/ oo, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
-	/*AL*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+// Version 5.2.0 and higher
+	/*NU*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
+	/*AL*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // AL alphabetic
 #endif
-	/*ID*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // ID ideograph (atomic)
-	/*IN*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IN inseparable
+	/*ID*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // ID ideograph (atomic)
+	/*IN*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // IN inseparable
 #ifdef v500
 // Version 5.0.0
-	/*HY*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // HY hyphens and spaces
-	/*BA*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // BA break after 
+	/*HY*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // HY hyphens and spaces
+	/*BA*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // BA break after 
 #else
 // Version 5.0.1
-	/*HY*/ oo, XX, SS, oo, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // HY hyphens and spaces
-	/*BA*/ oo, XX, SS, oo, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // BA break after 
+	/*HY*/ oo, XX, XX, SS, oo, SS, XX, XX, XX, oo, oo, SS, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // HY hyphens and spaces
+	/*BA*/ oo, XX, XX, SS, oo, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // BA break after 
 #endif
-	/*BB*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // BB break before 
-	/*B2*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, XX, XX, cc, XX,  oo, oo, oo, oo, oo, // B2 break either side, but not pair
-	/*ZW*/ oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, XX, oo, oo,  oo, oo, oo, oo, oo, // ZW zero width space
-	/*CM*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CM combining mark
-	/*WJ*/ SS, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // WJ word joiner
-																							    
-	/*H2*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, SS, SS, // Hangul 2 Jamo syllable
-	/*H3*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, SS, // Hangul 3 Jamo syllable
-	/*JL*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  SS, SS, SS, SS, oo, // Jamo Leading Consonant
-	/*JV*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, SS, SS, // Jamo Vowel
-	/*JT*/ oo, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, SS, // Jamo Trailing Consonant
+	/*BB*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // BB break before 
+	/*B2*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, oo, oo, oo, oo, SS, SS, oo, XX, XX, cc, XX,  oo, oo, oo, oo, oo, // B2 break either side, but not pair
+	/*ZW*/ oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, oo, XX, oo, oo,  oo, oo, oo, oo, oo, // ZW zero width space
+	/*CM*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, oo, SS, SS, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, oo, // CM combining mark
+	/*WJ*/ SS, XX, XX, SS, SS, SS, XX, XX, XX, SS, SS, SS, SS, SS, SS, SS, SS, SS, SS, XX, cc, XX,  SS, SS, SS, SS, SS, // WJ word joiner
+																									    
+	/*H2*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, SS, SS, // Hangul 2 Jamo syllable
+	/*H3*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, SS, // Hangul 3 Jamo syllable
+	/*JL*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  SS, SS, SS, SS, oo, // Jamo Leading Consonant
+	/*JV*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, SS, SS, // Jamo Vowel
+	/*JT*/ oo, XX, XX, SS, SS, SS, XX, XX, XX, oo, SS, oo, oo, oo, SS, SS, SS, oo, oo, XX, cc, XX,  oo, oo, oo, oo, SS, // Jamo Trailing Consonant
 	
 };
 
@@ -1039,7 +1078,8 @@ int findComplexBreak(enum break_class cls, enum break_class *pcls, enum break_ac
     if (!cch)
         return 0;
 
-    for (int ich = 1; ich < cch; ich++) {
+	int ich;
+    for (ich = 1; ich < cch; ich++) {
 
         // .. do complex break analysis here
         // and report any break opportunities in pbrk ..
@@ -1092,7 +1132,8 @@ int findLineBrk(enum break_class *pcls, enum break_action *pbrk, int cch, bool f
          cls = WJ;
 
     // loop over all pairs in the string up to a hard break or CRLF pair
-    for (int ich = 1; (ich < cch) && (cls != BK) && (cls != CR || pcls[ich] == LF); ich++) {
+	int ich;
+    for (ich = 1; (ich < cch) && (cls != BK) && (cls != CR || pcls[ich] == LF); ich++) {
 
         // handle spaces explicitly
         if (pcls[ich] == SP) {
@@ -1185,6 +1226,7 @@ struct LBAlias LBAliases[] = {
     BK, "BK", "MandatoryBreak",
     CB, "CB", "ContingentBreak",
     CL, "CL", "ClosePunctuation",
+    CP, "CP", "CloseParentheses",
     CM, "CM", "CombiningMark",
     CR, "CR", "CarriageReturn",
     EX, "EX", "Exclamation",
@@ -1217,7 +1259,8 @@ struct LBAlias LBAliases[] = {
 
 char * pszSampleCharsFromLBClass[] = {
     /*OP*/   "U+0028 LEFT PARENTHESIS",
-    /*CL*/   "U+0029 RIGHT PARENTHESIS",
+    /*CL*/   "U+007D RIGHT BRACE",
+    /*CP*/   "U+0029 RIGHT PARENTHESIS",
     /*QU*/   "U+0022 QUOTATION MARK",
     /*GL*/   "U+00A0 NO-BREAK SPACE",
     /*NS*/   "U+30A1 KATAKANA LETTER SMALL A",
@@ -1520,7 +1563,7 @@ void table_verify::verifyAndPrintTable()
 			else if ( ca == WJ)
 				no_break_pairs_with_space(cb, ca, "11: × WJ; ; 7: × ( SP | ZW )"); // 11: × WJ ; 7: × ( SP | ZW )
 			// must exclude all later context starting in x, such as rule LB 8, which occur before rule LB 18
-			else if ( cb == WJ && !(ca == CL || ca == EX || ca == IS || ca == SY))
+			else if ( cb == WJ && !(ca == CL || ca == CP || ca == EX || ca == IS || ca == SY))
 				no_break_pair(cb, ca, "11: WJ × ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 11: WJ × ; 7: × ( SP | ZW ) ; 18: SP ÷
 #ifdef v500
 // Version 5.0.0
@@ -1529,13 +1572,13 @@ void table_verify::verifyAndPrintTable()
 			else if ( cb != OP && ca == GL)
 				no_break_pair(cb, ca, "12: (!SP) × GL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12: [^SP] × GL ; 7: × ( SP | ZW )
 			// must exclude all later context starting in x, such as rule LB 13, which occur before rule LB 18
-			else if ( cb == GL && !(ca == CL || ca == EX || ca == IS || ca == SY))
+			else if ( cb == GL && !(ca == CL || ca == CP || ca == EX || ca == IS || ca == SY))
 				no_break_pair(cb, ca, "12: GL × ; 7: × ( SP | ZW )  ; 18: SP ÷"); // 12: GL × ; 7: × ( SP | ZW ) 
 #else
 // Version 5.0.1 and Version 5.1.0
 			// LB 12a  Do not break after NBSP and related characters.
 			// must exclude all later context starting in x, such as rule LB 13, which occur before rule LB 18
-			else if ( cb == GL && !(ca == CL || ca == EX || ca == IS || ca == SY))
+			else if ( cb == GL && !(ca == CL || ca == CP || ca == EX || ca == IS || ca == SY))
 				no_break_pair(cb, ca, "12: GL × ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12: GL × ; 7: × ( SP | ZW ); 18: SP ÷
 			// LB 12b  Do not break before NBSP and related characters except after SP, BA and HY
 			else if ((cb == BA || cb == HY) && ca == GL)
@@ -1545,8 +1588,8 @@ void table_verify::verifyAndPrintTable()
 				no_break_pair(cb, ca, "12a: [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 12a: [^SP, BA, HY] × GL ; 7: × ( SP | ZW ) ;  18: SP ÷
 #endif
 			// LB 13  Do not break before ‘]’ or ‘!’ or ‘;’ or ‘/’, even after spaces.
-			else if(ca == CL || ca == EX || ca == IS || ca == SY )
-				no_break_pairs_with_space(cb, ca, "13: × (CL | EX | IS | SY ) ; 7: × ( SP | ZW )"); // 13: × (CL | EX | IS | SY ) ; 7: × ( SP | ZW )
+			else if(ca == CL || ca == CP || ca == EX || ca == IS || ca == SY )
+				no_break_pairs_with_space(cb, ca, "13: × (CL | CP | EX | IS | SY ) ; 7: × ( SP | ZW )"); // 13: × (CL | CP | EX | IS | SY ) ; 7: × ( SP | ZW )
 			// LB 14  Do not break after ‘[’, even after spaces.
 			else if(cb == OP)
 				no_break_pairs_with_space(cb, ca, "14: OP SP* × ; 7: × ( SP | ZW )"); // 14: OP SP* × ; 7: × ( SP | ZW )
@@ -1554,7 +1597,7 @@ void table_verify::verifyAndPrintTable()
 			else if (cb == QU && ca == OP)
 				no_break_pairs_with_space(cb, ca, "15: QU SP* × OP ;"); // 15: QU SP* × OP ; 7: × ( SP | ZW )
 			// LB 16  Do not break within ‘]h’, even with intervening spaces.
-			else if (cb == CL && ca == NS)
+			else if ((cb == CL || cb == CP) && ca == NS)
 				no_break_pairs_with_space(cb, ca, "16: CL SP* × NS ;"); // 16: CL SP* × NS ; 7: × ( SP | ZW )
 			// LB 17  Do not break within ‘——’, even with intervening spaces.
 			else if (cb == B2 && ca == B2)
@@ -1604,7 +1647,7 @@ void table_verify::verifyAndPrintTable()
 			else if ( cb == PO && ca == AL)
 				no_break_pair(cb, ca, "24: PO × AL; 7: × ( SP | ZW ) ; 18: SP ÷"); // 24: PO × AL ; 7: × ( SP | ZW ) ; 18: SP ÷
 			// LB 25  Do not break between the following pairs of classes.
-			else if( (cb == CL || cb == NU) && (ca == PO || ca == PR) )
+			else if( (cb == CL || cb == CP || cb == NU) && (ca == PO || ca == PR) )
 				no_break_pair(cb, ca, "25: ( CL | NU )× (PO | PR) ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 25:( CL | NU )× PO ; 7: × ( SP | ZW ) ; 18: SP ÷
 			else if( (cb == HY || cb == IS || cb ==  NU || cb == SY ) && ca == NU)
 				no_break_pair(cb, ca, "25: ( HY | IS | NU | SY )× NU ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 25:( HY | IS | NU | SY )× NU ; 7: × ( SP | ZW ) ; 18: SP ÷
@@ -1640,8 +1683,15 @@ void table_verify::verifyAndPrintTable()
 			// LB 30 Do not break between letters, numbers or ordinary symbols and opening or closing punctuation 
 			else if ( ca == OP && (cb == AL || cb == NU)) 
 				no_break_pair(cb, ca, "30: (AL | NU)  × OP ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: (AL | NU) × OP ; 7: × ( SP | ZW ) ; 18: SP ÷
-			else if ( cb == CL && (ca == AL || ca == NU)) 
-				no_break_pair(cb, ca, "30: CL × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: CL × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷
+			else if ( (cb == CL || cb = CP)&& (ca == AL || ca == NU)) 
+				no_break_pair(cb, ca, "30: (CL | CP) × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: (CL | CP)× (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷
+#elif !defined(v510)
+// Version 5.2.0 and higher
+			// LB 30 Do not break between letters, numbers or ordinary symbols and opening *punctuation* or closing *parentheses* 
+			else if ( ca == OP && (cb == AL || cb == NU)) 
+				no_break_pair(cb, ca, "30: (AL | NU)  × OP ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: (AL | NU) × OP ; 7: × ( SP | ZW ) ; 18: SP ÷
+			else if ( cb == CP && (ca == AL || ca == NU)) 
+				no_break_pair(cb, ca, "30: CP × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷"); // 30: CP × (AL | NU) ; 7: × ( SP | ZW ) ; 18: SP ÷
 #endif
 			// LB 31  Break everywhere else.
 			else
