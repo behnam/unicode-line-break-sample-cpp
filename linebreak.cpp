@@ -225,6 +225,67 @@
 	 The files linebrk.vcproj, linebrk.rc, and resource.h are distributed together
 	 with this file and are included in the above.
 ----------------------------------------------------------------------------------*/
+enum break_class
+{
+	// input types
+	OP = 0,	// open
+	CL,	// closing punctuation
+	CP,	// closing parentheses (from 5.2.0) (before 5.2.0 treat like CL)
+	QU,	// quotation
+	GL,	// glue
+	NS,	// no-start
+	EX,	// exclamation/interrogation
+	SY,	// Syntax (slash)
+	IS,	// infix (numeric) separator
+	PR,	// prefix
+	PO,	// postfix
+	NU,	// numeric
+	AL,	// alphabetic
+	ID,	// ideograph (atomic)
+	IN,	// inseparable
+	HY,	// hyphen
+	BA,	// break after
+	BB,	// break before
+	B2,	// break both
+	ZW,	// ZW space
+	CM,	// combining mark
+	WJ, // word joiner
+
+	// used for Korean Syllable Block pair table
+	H2, // Hamgul 2 Jamo Syllable
+	H3, // Hangul 3 Jamo Syllable
+	JL, // Jamo leading consonant
+	JV, // Jamo vowel
+	JT, // Jamo trailing consonant
+
+	// these are not handled in the pair tables
+	SA, // South (East) Asian
+	SP,	// space
+	PS,	// paragraph and line separators
+	BK,	// hard break (newline)
+	CR, // carriage return
+	LF, // line feed
+	NL, // next line
+	CB, // contingent break opportunity
+	SG, // surrogate
+	AI, // ambiguous
+	XX, // unknown
+};
+
+// Break actions are the types of break opportunities that may occur at a particular
+// point in the input. Values for these are also needed in the UI portion of the code
+// so they are already defined here - for explanation see below in the line break
+// section.
+enum break_action
+{
+	DIRECT_BRK,
+	INDIRECT_BRK,
+	COMBINING_INDIRECT_BRK,
+	COMBINING_PROHIBITED_BRK,
+	PROHIBITED_BRK,
+	EXPLICIT_BRK,
+	HANGUL_SPACE_BRK,
+};
 
 // === LOCAL FUNCTION DECLARTIONS ===========================================
 int classifyLnBrk(const LPTSTR pszText, enum break_class * pcls,  int cch);
@@ -373,21 +434,6 @@ int CharFromLbcls2[] =
 {
 // OP, CL, CP, QU, GL, NS, EX, SY, IS, PR, PO, NU, AL, ID, IN, HY, BA, BB, B2, ZW, CM, WJ, H2, H3, JL, JV, JT, SA, SP, PS, BK, CR, LF, NL, CB, 
    'P','L','P','U','L','S','X','Y','S','R','O','U','L','D','N','Y','A','B','2','W','M','J','2','3','L','V','T','A','P','S','K','R','F','L','B', //....
-};
-
-// Break actions are the types of break opportunities that may occur at a particular
-// point in the input. Values for these are also needed in the UI portion of the code
-// so they are already defined here - for explanation see below in the line break
-// section.
-enum break_action
-{
-	DIRECT_BRK,
-	INDIRECT_BRK, 		
-	COMBINING_INDIRECT_BRK, 	
-	COMBINING_PROHIBITED_BRK, 	
-	PROHIBITED_BRK,
-	EXPLICIT_BRK,
-	HANGUL_SPACE_BRK,
 };
 
 //=== DEMO DIALOG AND HELPER FUNCTIONS==============================================
@@ -862,54 +908,6 @@ int main(int argc, char** argv)
 // takes as input only line break classes, so, by changing the mapping from
 // pseudo alphabet to actual Unicode Characters, this demo could be adapted 
 // for use in actual line breaking.
-
-enum break_class
-{
-	// input types
-	OP = 0,	// open
-	CL,	// closing punctuation
-	CP,	// closing parentheses (from 5.2.0) (before 5.2.0 treat like CL)
-	QU,	// quotation
-	GL,	// glue
-	NS,	// no-start
-	EX,	// exclamation/interrogation
-	SY,	// Syntax (slash)
-	IS,	// infix (numeric) separator
-	PR,	// prefix
-	PO,	// postfix
-	NU,	// numeric
-	AL,	// alphabetic
-	ID,	// ideograph (atomic)
-	IN,	// inseparable
-	HY,	// hyphen
-	BA,	// break after
-	BB,	// break before
-	B2,	// break both
-	ZW,	// ZW space
-	CM,	// combining mark
-	WJ, // word joiner
-
-	// used for Korean Syllable Block pair table
-	H2, // Hamgul 2 Jamo Syllable
-	H3, // Hangul 3 Jamo Syllable
-	JL, // Jamo leading consonant
-	JV, // Jamo vowel
-	JT, // Jamo trailing consonant
-
-	// these are not handled in the pair tables
-	SA, // South (East) Asian
-	SP,	// space
-	PS,	// paragraph and line separators
-	BK,	// hard break (newline)
-	CR, // carriage return
-	LF, // line feed
-	NL, // next line
-	CB, // contingent break opportunity
-	SG, // surrogate
-	AI, // ambiguous
-	XX, // unknown
-}; 
-
 
 enum break_class LnBrkClassFromChar[]  =
 {		
